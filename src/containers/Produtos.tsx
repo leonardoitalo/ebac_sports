@@ -1,38 +1,20 @@
-import { Produto as ProdutoType } from '../App'
 import Produto from '../components/Produto'
-
 import * as S from './styles'
+import { useGetDataQuery } from '../redux/api/slice'
 
-type Props = {
-  produtos: ProdutoType[]
-  favoritos: ProdutoType[]
-  adicionarAoCarrinho: (produto: ProdutoType) => void
-  favoritar: (produto: ProdutoType) => void
-}
+const ProdutosComponent = () => {
+  const { data: produtos = [], isLoading, isError } = useGetDataQuery();
 
-const ProdutosComponent = ({
-  produtos,
-  favoritos,
-  adicionarAoCarrinho,
-  favoritar
-}: Props) => {
-  const produtoEstaNosFavoritos = (produto: ProdutoType) => {
-    const produtoId = produto.id
-    const IdsDosFavoritos = favoritos.map((f) => f.id)
-
-    return IdsDosFavoritos.includes(produtoId)
-  }
+  if (isLoading) return <p>Carregando...</p>;
+  if (isError) return <p>Ocorreu um erro ao carregar os produtos.</p>;
 
   return (
     <>
       <S.Produtos>
         {produtos.map((produto) => (
           <Produto
-            estaNosFavoritos={produtoEstaNosFavoritos(produto)}
             key={produto.id}
-            produto={produto}
-            favoritar={favoritar}
-            aoComprar={adicionarAoCarrinho}
+            product={produto}
           />
         ))}
       </S.Produtos>
